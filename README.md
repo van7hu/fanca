@@ -1,25 +1,25 @@
-**I.REQUIREMENTS**
+**I. REQUIREMENTS**
 
-**1.Terms**  
+**1. Terms**  
 Fuzzing genealogy and even the term “fuzz” originates from a researcher at the University of Wisconsin, Madison named Barton Miller. In the mid to late eighties, Professor Miller observed that thunderstorms caused line noise in his modem connection to remote computers. This line noise periodically injected junk characters into the remote sessions causing interference with program operation. Eventually, programs crashed due to these junk characters, and, Professor Miller coined the term “fuzz” to describe this behavior  
 
-**2.Requirements for Fuzzer (Sutton et al. and Takanen et al.)**  
-**2.1.Document test cases:  Guarantee reproducibility**  
+**2. Requirements for Fuzzer (Sutton et al. and Takanen et al.)**  
+**2.1. Document test cases:  Guarantee reproducibility**  
 Test case documentation informs a researcher of a negative test case’s storage location, time at which a program ran the test case, and the result of executing a program with the test case. This documentation guarantees that the observed behavior can be reliably reproduced. If a negative test case is not properly documented and stored, then a crash caused by it is incapable of being reproduced or analyzed. Improper documentation and storage can also cause a higher false positive rate. In this context, a false positive indicates a negative test case causes a program exception when in actuality program execution terminates normally.  
 
-**2.2.Monitor a program under test: provide informative metrics**  
+**2.2. Monitor a program under test: provide informative metrics**  
 Process monitoring tracks a program’s state during the execution of a negative test case. Information collected from the monitoring serves as historical data about program behavior. The historical data can then be aggregated to generate useful metrics, such as code coverage. Various forms of code coverage metrics exist like branch coverage. This metric calculates the number of branches executed by a test case out of the total number of branches within a program [Beizer]. For completeness, a branch is a program decision point where execution can proceed in more than one alternative. Accurate and relevant metrics, like branch coverage,are helpful in determining the amount of code tested by a fuzzer.  
 
-**2.3.Properly detect program exceptions:**  
+**2.3. Properly detect program exceptions:**  
 	Error detection, also known as exception monitoring or health monitoring, determines a program’s reaction to a test case by examining process state after execution ceases. A monitor evaluates process state for abnormal exit conditions like segmentation violations, bus errors, and arithmetic exceptions among many others. The fidelity of an exception monitor impacts the rate of false positives as well as false negatives. A false negative states a test case causes a program 
 to exit normally when, in reality, the test case causes an exception. Issues about exception monitoring fidelity are important to consider while developing or evaluating a fuzzer.
 
-**2.4.Exception analysis**  
+**2.4. Exception analysis**  
 	Takanen et al. extend upon Sutton’s requirements by encouraging the addition of exception analysis. Exception analysis combines information gathered during process and exception monitoring to determine the cause and impact of an observed exception. The effort required for this analysis is dependent upon the level of detail obtained from process and exception monitoring. Exceptions,also referred to as program faults, have underlying defects ranging in severity from  benign Denial Of Service (DoS) to catastrophic remotely exploitable memory corruption. Defects resulting in DoS are less severe than remotely exploitable defects, because it is infeasible to run arbitrary malicious code. With remotely exploitable defects, an attacker may be capable of exploiting the defect and assuming full control of the running process. To determine a defect’s cause and severity, exception analysis can be conducted by rerunning a test case with a debugger connected
 to the program under test, inserting special debugging shared libraries (e.g. libgmalloc), or by running third party utilities to parse and interpret error logs (e.g. !exploitable or crashwrangler). A determination of cause and severity derived from exception analysis informs a developer of a defect’s impact to a program’s customers.
 
 **II. Fuzzer's Design**  
-**1.Fuzzer classification**
+**1. Fuzzer classification**
 	Fuzzer classification primarily relies on a dissection of a fuzzer’s algorithm for generating negative test cases.
 	There're three types of fuzzer:
 		- Mutation fuzzer
