@@ -1,7 +1,6 @@
 I. REQUIREMENTS
 1. Terms
 	Fuzzing genealogy and even the term “fuzz” originates from a researcher at the University of Wisconsin, Madison named Barton Miller. In the mid to late eighties, Professor Miller observed that thunderstorms caused line noise in his modem connection to remote computers. This line noise periodically injected junk characters into the remote sessions causing interference with program operation. Eventually, programs crashed due to these junk characters, and, Professor Miller coined the term “fuzz” to describe this behavior
-
 2. Requirements for Fuzzer (Sutton et al. and Takanen et al.)
 2.1. Document test cases:  Guarantee reproducibility
 	Test case documentation informs a researcher of a negative test case’s storage location, time at which a program ran the test case, and the result of executing a program with the test case. This documentation guarantees that the observed behavior can be reliably reproduced. If a negative test case is not properly documented and stored, then a crash caused by it is incapable of being reproduced or analyzed. Improper documentation and storage can also cause a higher false positive rate. In this context, a false positive indicates a negative test case causes a program exception when in actuality program execution terminates normally.
