@@ -1,0 +1,1 @@
+python fanca.py -f examples\notepad\notepad.cfg
