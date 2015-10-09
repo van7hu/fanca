@@ -1,0 +1,63 @@
+Licenses of Plugin Libraries
+
+The KMPlayer uses the following libraries as plugin. It is not essential to 
+execute the player as it is fundamentally based upon the multimedia framework 
+called directshow. The core part of the player has been written by delphi from 
+scratch. 
+         
+
+<General Public License> :: http://www.gnu.org/copyleft/gpl.html
+AC3filter : http://ac3filter.sourceforge.net/
+libmpeg2 : http://libmpeg2.sourceforge.net/
+libmad : http://www.underbit.com/products/mad/
+liba52 : http://liba52.sourceforge.net/
+libdca : http://developers.videolan.org/libdca.html
+libmpalyer : http://www.mplayerhq.hu/
+MediaInfo : http://mediainfo.sourceforge.net/
+Gabest's filters* : http://sourceforge.net/projects/guliverkli/
+(Splitter : Avi;MKV;RM;OGG/OGM;MPEG;MP3/AAC;Dirac;DSM;Nut;RadGt;MP4 
+ Decoder : Audio(MPEG1/2;AAC;AC3;DTS), Video(MPEG1/2) Stream Switcher)
+
+<Lesser General Public License> :: http://www.gnu.org/copyleft/lesser.html
+libavcodec : http://ffmpeg.sourceforge.net/
+XviD : http://www.xvid.org/
+MPC : http://www.musepack.net/
+mmswitch : http://corecodec.org/projects/mmswitch
+iconv.dll : http://www.gnu.org/software/libiconv/
+libfaac.dll : http://www.audiocoding.com
+FastMM : http://fastmm.sourceforge.net
+
+<BSD or BSD-style license> :: http://en.wikipedia.org/wiki/BSD_license
+Ogg(Vorbis) : http://www.xiph.org/ogg/vorbis/
+FLAC : http://flac.sourceforge.net/
+Theora : http://www.theora.org/
+
+<Mozilla Public License> :: http://www.mozilla.org/MPL/
+Image loader : http://www.delphi-gems.com/Graphics.php
+
+<ETC>
+Libfaad2 : GPL, owned by Ahead : http://www.nero.com/
+Monkey's Audio : Custom license : http://www.monkeysaudio.com/
+BASS : free for non-money making use : http://www.un4seen.com/
+Unrar library : Free : http://www.rarlab.com/
+DirectX SDK Library, DirectShow BaseClass  - www.progdigy.com & JEDI Project..
+
+BarMenu Components
+Copyright (C) 2000-2003 Bluecave Software.
+http://www.bluecave.net
+
+DC-DSP Filter
+Copyright (C) 2003, 2004 Milenko Mitrovic
+http://www.dsp-worx.de
+
+TNT Unicode Controls
+Copyright (c) 2002-2006, Troy Wolbrink
+http://www.tntware.com
+
+<DirectX, WMP files>
+Old_QUARTZ.DLL - DirectShow default library
+wmploc.dll - Windows Media visualization
+wmpui.dll - Windows Media visualization
+wmadmod.dll - Windows media audio DMO
+wmvdmod.dll - Windows media video DMO
+

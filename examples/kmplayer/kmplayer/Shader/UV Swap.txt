@@ -1,0 +1,16 @@
+// UV Swap=ps_2_0
+// Code by Bryce Kerley
+// http://blog.brycekerley.net/post/572467504/hlsl-uv-swap
+
+sampler s0 : register(s0);
+
+float4 main(float2 tex : TEXCOORD0) : COLOR
+{
+    float4x4 matUVshiftRGB = {
+-0.00029999999999998084, 0.00013179999999999513, 1.0041311, 0,
+-0.0010000000000000286, 1.004206, 0.00014329999999999492, 0,
+1, -.00002499999999975368, 0.00002220000000001008, 0,
+0, 0, 0, 0};
+    // matrix math!
+    return mul(tex2D( s0, tex), matUVshiftRGB);
+}

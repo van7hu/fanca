@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Peach version="1.0" author="Jason Kratzer" site="http://www.flinkd.org">
+  <Include ns="default" src="file:defaults.xml"/>
+
+  <!-- Please Note:  This PIT will only work with the "OriginalSeed.mov" file
+       discussed in "Determining Exploitability - Memory Corruption Vulnerabilities"
+	   It has only been provided to demonstrate the issues presented in that article -->
+  <DataModel name="MP4FileFormat">
+	  <Block name="Preamble">
+	    <Blob length="637"/>
+	  </Block>
+	  <Block name="stscBlock">
+		<Number name="stscSize" size="32" endian="big">
+		  <Relation type="size" of="stscData" expressionSet="size+8" expressionGet="size-8"/>
+		</Number>
+		<String name="stscIdentifier" value="stsc" token="true"/>
+		<Block name="stscData">
+		  <Number name="version" size="8" signed="false" endian="big"/>
+		  <Blob name="flags" length="3"/>
+		  <Number name="numberOfEntries" size="32" signed="false" endian="big">
+			<Relation type="count" of="sampleToChunkTable"/>
+		  </Number>
+		  <Block name="sampleToChunkTable" maxOccurs="1024">
+			<Number name="firstChunk" size="32" signed="false" endian="big"/>
+			<Number name="samplesPerChunk" size="32" signed="false" endian="big"/>
+			<Number name="sampleDescriptionID" size="32" signed="false" endian="big"/>
+		  </Block>
+		</Block>
+	  </Block>
+	  <Block name="Cleanup">
+	    <Blob/>
+	  </Block>
+  </DataModel>
+
+  <StateModel name="State" initialState="Initial">
+    <State name="Initial">
+      <Action type="open" />
+      <Action name="WriteFile" type="output" publisher="file">
+        <DataModel ref="MP4FileFormat" />
+        <Data name="data" fileName="C:\svn-peach\OriginalSeed.mov"/>
+      </Action>
+      <Action type="close" publisher="file" />
+      <Action type="call" method="kmplayer.exe" publisher="launch"/>
+    </State>
+  </StateModel>
+  <Agent name="LocalAgent">
+    <Monitor class="debugger.WindowsDebugEngine">
+      <Param name="CommandLine" value="C:\Program Files\The KMPlayer\KMPlayer.exe &quot;C:\svn-peach\fuzzed.mov&quot;" />
+      <Param name="StartOnCall" value="kmplayer.exe" />
+    </Monitor>
+    <Monitor class="process.PageHeap">
+      <Param name="Executable" value="kmplayer.exe"/>
+    </Monitor>
+  </Agent>
+  <Test name="TheTest">
+    <Exclude/>
+    <Include xpath="//stscBlock" />
+    <Strategy class="rand.RandomMutationStrategy" switchCount="5000" maxFieldsToMutate="7"/>
+    <Agent ref="LocalAgent" />
+    <StateModel ref="State"/>
+    <Publisher class="file.FileWriter" name="file">
+      <Param name="fileName" value="fuzzed.mov" />
+    </Publisher>
+    <Publisher class="process.DebuggerLauncherGui" name="launch">
+      <Param name="windowName" value="The KMPlayer" />
+    </Publisher>
+  </Test>
+  <Run name="DefaultRun">
+    <Test ref="TheTest" />
+    <Logger class="logger.Filesystem">
+      <Param name="path" value="C:\logs" />
+    </Logger>
+  </Run>
+</Peach>

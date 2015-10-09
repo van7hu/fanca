@@ -1,0 +1,91 @@
+// SuperResolution - V1.0=ps_2_0
+// Emmanuel - 6/03/2010
+// www.homecinema-fr.com/forum/viewtopic.php?f=1195&t=29814317&start=981
+
+// Super-resolution filter to be used behind a sharpen filter
+// such as unsharp mask, ffdshow or avisynth LSF.
+
+#define FinesseRendu 0 // 0: very fine, 1: end, 2: medium, 3: coarse
+
+#define SeuilBruit 0.15   // to prevent the rise in background noise and
+               // The enhancement of small details in the textures
+               // Between 0.1 and 0.2
+
+#define diff 0.49      // affect the rendering "3D-Like", type:
+               // 0.49 => 3D-Like + now
+               // 0.50 => 3D-Like this
+               // 0.51 => 3D-Like - this
+
+#define ICG 0         // Intensity of gamma correction, type 0 to 5
+            // 0: low, 5: high
+			
+#define IAT 3         // Intensity enhancement of textures, from 0 to 3 type
+            // 0: strong (recommended for diffuser 720p)
+            // 3: low (recommended for diffuser 1080p)
+
+sampler s0 : register(s0);
+float4 p1 : register(c1);
+
+#define dx (p1[0])
+#define dy (p1[1])
+
+float4 main( float2 tex : TEXCOORD0 ) : COLOR
+{
+   // Pixel original, blurred, corrected
+   float4 ori = tex2D(s0, tex);
+   float4 flou;
+   float4 cori;
+   float seuil = 0.82 + FinesseRendu/100;
+
+   // Get the matrix of 9 points
+   // [1, 2, 3]
+   // [4, ori, 5]
+   // [6, 7, 8]
+
+   float4 c1 = tex2D(s0, tex + float2(-dx,-dy));
+   float4 c2 = tex2D(s0, tex + float2(0,-dy));
+   float4 c3 = tex2D(s0, tex + float2(dx,-dy));
+   float4 c4 = tex2D(s0, tex + float2(-dx,0));
+   float4 c5 = tex2D(s0, tex + float2(dx,0));
+   float4 c6 = tex2D(s0, tex + float2(-dx,dy));
+   float4 c7 = tex2D(s0, tex + float2(0,dy));
+   float4 c8 = tex2D(s0, tex + float2(dx,dy));
+
+   // Edge detection
+   // Filter by sobel
+   float delta1,delta2,value;
+
+   // Horizontal gradient
+   //   [ -1, 0 ,1 ]
+   //   [ -2, 0, 2 ]
+   //   [ -1, 0 ,1 ]
+   delta1 = (c3 + 2*c5 + c8)-(c1 + 2*c4 + c6);
+
+   // Vertical Gradient
+   //   [ -1,- 2,-1 ]
+   //   [  0,  0, 0 ]
+   //   [  1,  2, 1 ]
+   delta2 = (c6 + 2*c7 + c8)-(c1 + 2*c2 + c3);
+
+   // Calculation
+   value =  sqrt(mul(delta1,delta1) + mul(delta2,delta2)) ;
+
+   // Gamma adaptive near a transition
+   cori = ori;
+   if ((value >= seuil-diff*1.15)&&(value <= seuil)) cori = pow(ori,1./(1-value/(10.5-ICG/10)));
+   //If ((value> = threshold-diff * 1.15) && (value <= threshold)) cori = float4 (1,0,0,0);
+
+   // Unsharp Mask to enhance the textures
+
+   // Calculate blurring (Gaussian)
+   // To normalize the values, divide by the sum of the coef
+   // 1/(1+2+1+2+4+2+1+2+1) = 1/ 16 = .0625
+
+   flou = (c1+c3+c6+c8 + 2*(c2+c4+c5+c7)+ 4*cori)*0.0625;
+
+   // Sharpen textures if they are far from an edge 
+   if ((value > SeuilBruit) && (value < seuil-diff)) cori = (2-IAT/10)*cori - (1-IAT/10)*flou;
+   //If ((value> SeuilBruit) && (value <prev-line)) cori = float4 (0,0,1,0);
+
+   return cori;
+}

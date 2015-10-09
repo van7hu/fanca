@@ -1,0 +1,27 @@
+// Grayscale for SD&HD video input=ps_2_0
+// http://forum.doom9.org/showthread.php?t=157634
+
+// (C) 2011 Jan-Willem Krans (janwillem32 <at> hotmail.com)
+// This file is part of Video pixel shader pack.
+// This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+// grayscale for SD&HD video input
+// This shader should not be run as a screen space pixel shader.
+// This shader requires compiling with ps_2_0, but higher is better, see http://en.wikipedia.org/wiki/Pixel_shader to look up what PS version your video card supports.
+// If possible, avoid compiling with the software emulation modes (ps_?_sw). Pixel shaders require a lot of processing power to run in real-time software mode.
+// If used in combination with other shaders and filters, place this and other Y'CbCr-type shaders at the beginning of the processing chain.
+// This shader will remove color from an image.
+
+sampler s0;
+float2 c0;
+
+float4 main(float2 tex : TEXCOORD0) : COLOR
+{
+	float3 s1 = tex2D(s0, tex).rgb;// original pixel
+	float3 sg;
+	if(c0.x < 1120 && c0.y < 630) sg = float3(.299, .587, .114);// SD grayscale
+	else sg = float3(.2126, .7152, .0722);// HD grayscale
+	return dot(s1, sg);// grayscale output
+}

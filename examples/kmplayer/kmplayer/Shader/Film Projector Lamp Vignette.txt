@@ -1,0 +1,32 @@
+// Projector Film Lamp Vignette=ps_2_0
+// http://forum.doom9.org/showthread.php?t=157634
+
+// (C) 2011 Jan-Willem Krans (janwillem32 <at> hotmail.com)
+// This file is part of Video pixel shader pack.
+// This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 2.
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+// projector film lamp vignette
+// This shader can be run as a screen space pixel shader.
+// This shader requires compiling with ps_2_0, but higher is better, see http://en.wikipedia.org/wiki/Pixel_shader to look up what PS version your video card supports.
+// If possible, avoid compiling with the software emulation modes (ps_?_sw). Pixel shaders require a lot of processing power to run in real-time software mode.
+// Use this shader to apply an effect that looks like projecting trough film with an unstable lamp.
+
+// fractions, either decimal or not, are allowed
+// VignetteSize, interval [2, 9]
+#define VignetteSize 4
+// LampFlicker, interval [0., 1024.]
+#define LampFlicker 192.
+
+sampler s0;
+float4 c0;
+
+float4 main(float2 tex : TEXCOORD0) : COLOR
+{
+	float2 cd = .75*(.5-tex);// measure the distance to the image center
+	float Lamp = .875+sin(c0.w*LampFlicker)/LampFlicker;// vary the lamp intensity
+	float4 s1 = tex2D(s0, tex);// original pixel
+	//s1 = .5;// uncomment this line to only display the vignette
+	return s1*1.25*(Lamp-pow(VignetteSize*dot(cd, cd), 1.75));// output the vignette over the original pixel
+}
