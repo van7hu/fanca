@@ -29,7 +29,7 @@ class DbgEventHandler(PyDbgEng.IDebugOutputCallbacksSink, PyDbgEng.IDebugEventCa
             ExceptionInformation11, ExceptionInformation12, ExceptionInformation13,
             ExceptionInformation14, FirstChance):
 
-        print 'WindowsDebugEngine: We got an exception'
+        print 'WindowsDebugEngine: We got an exception: #8x' % ExceptionCode
 
         if FirstChance:
             # Guard page or illegal op

@@ -39,7 +39,9 @@ class WindowsDebugEngine:
     def runCommand(self, command, follow_fork):
         debugger = Debugger()
         print 'WindowsDebugEngine: Start new thread to run the debugger'
+        print 'Command: '+command
         debugger.createDebugger(command, follow_fork)
+
 
     # some helper functions
     def checkProcessCpuUsageAndKill(self, process_name):
