@@ -1,0 +1,1 @@
+python fanca.py -f examples\dividebyzero\config.cfg

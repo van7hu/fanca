@@ -1,0 +1,14 @@
+1. Overview
+- Overall design of this fuzzer is based on components required by a fuzzer (see top level README.md)
+- Each component is called engine
+- Each engine is nothing, but a wrapper for specific engine type of component
+- Each engine communicates with each others through jsonsocket, and is expected to be not dependent on other engine
+- All engines are managed by ManagementEngine
+- ManagemengEngine takes configOptions from config file
+
+2. A brieft look
+Current engines are:
+	- fanca\Fanca\core\managements\managementEngine.py
+	- fanca\Fanca\core\executors\generatorEngine.py
+	- fanca\Fanca\core\executors\executorEngine.py
+	- fanca\Fanca\core\loggers\loggerEngine.py

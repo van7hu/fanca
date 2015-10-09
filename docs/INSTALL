@@ -1,0 +1,18 @@
+NOTE: This fuzzer is intended to be cross-platform, but since it's still in it baby state, you should not expect it much, I've just used some dirty patches in 
+some source code of python27, PyDgbEng, ... e.g. Hard coded (magic constanting it) the Windbg path of in the PyDbgEng module ...
+
+1. Requirements
+- Windows 7 32-bit
+
+2. Install instrucstions
+2.1. Windows 7 32-bit
+- copy folder fanca/docs/runtimes/WinDDk to your C:\\ drive
+- copy fanca/docs/runtimes/Python27 to your favourite destinatio (often C:\\)
+- add python to your PATH
+- add fanca/ to your PythonPath, 
+e.g. mine is: C:\Windows\system32\python27.zip; C:\Python27\DLLs; C:\Python27\lib; C:\Python27\lib\plat-win; C:\Python27\lib\lib-tk; C:\Python27;
+C:\Python27\lib\site-packages; C:\Python27\lib\site-packages\win32; C:\Python27\lib\site-packages\win32\lib; C:\Python27\;C:\fanca
+
+All is done?:
+- run notepad.bat for testing for fuzzing notepad.exe
+- run dividebyzero.bat for testing for fuzzing dividebyzero.exe
