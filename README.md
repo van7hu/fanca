@@ -1,5 +1,8 @@
-WARNING: This file describe about fuzzing in general, for install, designs see
-docs/ folder
+WARNING: This file describes about fuzzing in general, for install, designs see
+docs/ folder.
+
+
+WARNING: I not good at python, use this at your own risk, or help me?
 
 
 **I. REQUIREMENTS**
