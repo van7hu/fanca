@@ -11,28 +11,28 @@ from Fanca.core.managements.mutatorManagementEngine import GeneralMutatorManagem
 
 
 class ManagementEngine:
-	def __init__(self, configOptions):
-		t1 = Thread(target=self.initGeneratorEngine, args=(configOptions,))
-		t2 = Thread(target=self.initExecutorEngine, args=(configOptions,))
-		t3 = Thread(target=self.initLoggerEngine, args=(configOptions,))
-		print 'ManagementEngine: Start new thread for GeneratorEngine'
-		t1.start()
-		print 'ManagementEngine: Start new thread for ExecutorEngine'
-		t2.start()
-		print 'ManagementEngine: Start new thread for LoggerEngine'
-		t3.start()
-		# sleep 3 seconds waitting for those thread started fully
-		time.sleep(3)
-		
-		if int(configOptions.management_engine) == 0:
-			print 'Management Engine: Using GeneralMutatorManagementEngine'
-			GeneralMutatorManagementEngine(configOptions)
+    def __init__(self, configOptions):
+        t1 = Thread(target=self.initGeneratorEngine, args=(configOptions,))
+        t2 = Thread(target=self.initExecutorEngine, args=(configOptions,))
+        t3 = Thread(target=self.initLoggerEngine, args=(configOptions,))
+        print 'ManagementEngine: Start new thread for GeneratorEngine'
+        t1.start()
+        print 'ManagementEngine: Start new thread for ExecutorEngine'
+        t2.start()
+        print 'ManagementEngine: Start new thread for LoggerEngine'
+        t3.start()
+        # sleep 5 seconds waitting for those thread started fully
+        time.sleep(5)
 
-	def initGeneratorEngine(self, configOptions):
-		GeneratorEngine(configOptions)
+        if int(configOptions.management_engine) == 0:
+            print 'Management Engine: Using GeneralMutatorManagementEngine'
+            GeneralMutatorManagementEngine(configOptions)
 
-	def initExecutorEngine(self, configOptions):
-		ExecutorEngine(configOptions)
+    def initGeneratorEngine(self, configOptions):
+        GeneratorEngine(configOptions)
 
-	def initLoggerEngine(self, configOptions):
-		LoggerEngine(configOptions)
+    def initExecutorEngine(self, configOptions):
+        ExecutorEngine(configOptions)
+
+    def initLoggerEngine(self, configOptions):
+        LoggerEngine(configOptions)

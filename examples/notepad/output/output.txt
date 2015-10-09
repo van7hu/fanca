@@ -8,16 +8,7 @@
 [fuzzer_type]
 type = 0
 attack_heuristics_presents = 0
-executors_presents = 1
-monitors_presents = 1
-loggers_presents = 1
-&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&ers_presents = 0
-learnings_presents = 0
-
-#
-# 1. executor_type
-#	_ 0: Windows command line
-# Other options presents depends on the 'executor_type' option
+executors_pr—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————ptions presents depends on the 'executor_type' option
 # 2. test_case_generation_engine
 #	_ 0: general_mutator (based on sample files) 
 # All the path here must be WITH a trailling '\'

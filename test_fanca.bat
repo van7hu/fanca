@@ -1,1 +1,1 @@
-python fanca.py -f examples\notepad\notepad.cfg
+python fanca.py -f examples\dividebyzero\config.cfg

@@ -183,7 +183,7 @@ def _relocate_path(path, from_prefix, to_prefix, log):
 
 def relocate_python(install_prefix, verbose=False):
     """Relocate this Python installation.
-    
+
     "Relocation" involves updating hardcoded shebang lines in Python scripts
     and (on some platforms) binary patching of built-in runtime-lib-paths
     to point to the given install prefix.
@@ -191,14 +191,14 @@ def relocate_python(install_prefix, verbose=False):
     import sys
     import os
     from os.path import isabs, join, splitext
-    
+
     if verbose:
         def log(s):
             sys.stderr.write(s+"\n")
     else:
         def log(s):
             pass
-    
+
     assert isabs(install_prefix)
 
     if len(install_prefix) > shortest_original_prefix_length:
@@ -240,7 +240,7 @@ if __name__ == "__main__":
                                "'%s' is in a Python site-packages dir"
                                % (python_exe, basename(__file__)))
         del python_exe, dirname, exists, join, basename, abspath
-        
+
         relocate_python(install_prefix, True)
 
     else:
@@ -249,4 +249,3 @@ if __name__ == "__main__":
             if key.endswith("_src"): continue
             if key in ("platinfo", "configuration"): continue
             print("%s: %s" % (key, value))
-    

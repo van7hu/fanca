@@ -1,3 +1,7 @@
+WARNING: This file describe about fuzzing in general, for install, designs see
+docs/ folder
+
+
 **I. REQUIREMENTS**
 
 **1. Terms**  

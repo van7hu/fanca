@@ -16,43 +16,43 @@ from zzuf_mutator import main as zzuf_replace
 
 #-----------------------------------------------------------------------
 class CMultipleZzufMutator:
-  def __init__(self, samples_path, total, output_zip):
-    self.samples_path = samples_path
-    self.total = total
-    self.output_zip = output_zip
+    def __init__(self, samples_path, total, output_zip):
+        self.samples_path = samples_path
+        self.total = total
+        self.output_zip = output_zip
 
-  def mutate(self):
-    with zipfile.ZipFile(self.output_zip, "w") as fuzz_zip:
-      fuzz_zip.comment = "NIGHTMARE"
-      for i in range(self.total):
-        name = tempfile.mktemp()
-        while 1:
-          template = random.choice(os.listdir(self.samples_path))
-          template = os.path.join(self.samples_path, template)
-          if os.path.isfile(template):
-            break
-          continue
-        
-        zzuf_replace(template, name)
-        fuzz_zip.write(name)
-        
-        # Add also the .diff file if it was created:
-        if os.path.exists(name + ".diff"):
-          fuzz_zip.write(name + ".diff")
-          os.remove(name + ".diff")
-        os.remove(name)
+    def mutate(self):
+        with zipfile.ZipFile(self.output_zip, "w") as fuzz_zip:
+            fuzz_zip.comment = "NIGHTMARE"
+            for i in range(self.total):
+                name = tempfile.mktemp()
+                while 1:
+                    template = random.choice(os.listdir(self.samples_path))
+                    template = os.path.join(self.samples_path, template)
+                    if os.path.isfile(template):
+                        break
+                    continue
+
+                zzuf_replace(template, name)
+                fuzz_zip.write(name)
+
+                # Add also the .diff file if it was created:
+                if os.path.exists(name + ".diff"):
+                    fuzz_zip.write(name + ".diff")
+                    os.remove(name + ".diff")
+                os.remove(name)
 
 #-----------------------------------------------------------------------
 def main(path, number, output):
-  mutator = CMultipleZzufMutator(path, int(number), output)
-  mutator.mutate()
+    mutator = CMultipleZzufMutator(path, int(number), output)
+    mutator.mutate()
 
 #-----------------------------------------------------------------------
 def usage():
-  print "Usage:", sys.argv[0], "samples_path #samples output_zip"
+    print "Usage:", sys.argv[0], "samples_path #samples output_zip"
 
 if __name__ == "__main__":
-  if len(sys.argv) != 4:
-    usage()
-  else:
-    main(sys.argv[1], sys.argv[2], sys.argv[3])
+    if len(sys.argv) != 4:
+        usage()
+    else:
+        main(sys.argv[1], sys.argv[2], sys.argv[3])
