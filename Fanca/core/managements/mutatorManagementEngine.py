@@ -1,73 +1,70 @@
-import time, datetime
-from Fanca.commons.jsonsocket import Client, Server
-from Fanca.CONFIG import *
+import time, datetime, copy
+from multiprocessing import Process, Queue
+
+from Fanca.core.executors.generatorEngine import GeneratorEngine
+from Fanca.core.executors.executorEngine import ExecutorEngine
+from Fanca.core.loggers.loggerEngine import LoggerEngine
 
 class GeneralMutatorManagementEngine:
-    def __init__(self, configOptions):
+    def __init__(self, configDict):
         # Start fuzzing now
-        iteration_to_fuzz = configOptions.iteration
+        iteration_to_fuzz = configDict['iteration']
         iteration_index = 0
-        data_request_new_testcase = {'cmd': 'make_output'}
-        data_request_run_debugger = {'cmd': 'run'}
-
-        smeClient = Client()
-        smeClient.connect(LOG_ENGINE_HOST, LOG_ENGINE_PORT)
-        smeClient.send({'cmd': 'log_str', 'str': 'Fuzzing started at '+str(datetime.datetime.now())})
-
-        # server to wait for reply from executor engine
-        managementServer = Server(MANAGEMENT_ENGINE_HOST, MANAGEMENT_ENGINE_PORT)
-
-
-        while iteration_index <= iteration_to_fuzz:
+        
+        while iteration_index < iteration_to_fuzz:
             iteration_index = iteration_index + 1
-            print str(iteration_index) + '. GeneralMutatorManagementEngine: Begin new iteration'
-            smeClient = Client()
+            print str(iteration_index)+'. Begin iteration #'+str(iteration_index)
+            
+            # make new test case from GeneratorEngine
+            print 'MutatorManagementEngine: Request for making new testcase'
+            generatorQueue = Queue()
+            generatorDict = copy.deepcopy(configDict)
+            generatorQueue.put(generatorDict)
 
-            print 'GeneralMutatorManagementEngine: Connect and request new test case from GeneratorEngine'
-            smeClient.connect(GENERATOR_ENGINE_HOST, GENERATOR_ENGINE_PORT)
-            smeClient.send(data_request_new_testcase)
-            recv = smeClient.recv()
-            if recv['fin'] == 'ok':
-                print 'GeneralMutatorManagementEngine: Got new test case'
-                original_sample = recv['origin']
-            elif recv['fin'] == 'max':
-                print 'GeneralMutatorManagementEngine: Maximum samples reached,  halt now'
+            t = Process(target=GeneratorEngine, args=(generatorQueue, iteration_index,))
+            t.start()
+            t.join()
+            ret = generatorQueue.get()
+            generatorQueue.close()
+            if(ret['fin']=='max'):
+                print 'MutatorManagementEngine: Maximum number sample reached, halt now.'
                 while True:
                     pass
+            
+            # run the ExecutorEngine
+            print 'MutatorManagementEngine: Request to run executor'
+            executorQueue = Queue()
+            executorDict = copy.deepcopy(configDict)
+            executorQueue.put(executorDict)
 
-            print 'GeneralMutatorManagementEngine: Connect and request run process from ExecutorEngine'
-            smeClient.connect(DEBUG_ENGINE_HOST, DEBUG_ENGINE_PORT)
-            smeClient.send(data_request_run_debugger)
-            smeClient.close()
-            print
-            print 'GeneralMutatorEngine: Start server and waitting for reply from ExecutorEngine'
-            print ''
-
-            # In the case of exception occured, the reply for exception always comes first, so,
-            # 1. wait for reply from exception
-            # 2. wait for reply from normal, discard it, then proceed to exception handling
-            managementServer.accept()
-            debuggerRecv = managementServer.recv()
-            if debuggerRecv['fin'] == 'exception':
-                managementServer.accept()
-                managementServer.recv()
-
-
-            if debuggerRecv['fin'] == 'normal':
-                if iteration_index % int(configOptions.normal_iteration_count) == 0:
-                    smeClient.connect(LOG_ENGINE_HOST, LOG_ENGINE_PORT)
+            t = Process(target=ExecutorEngine, args=(executorQueue,))
+            t.start()
+            t.join()
+            log_data = executorQueue.get()
+            print '################log_data = '+str(log_data)
+            executorQueue.close()
+            
+            need_to_write_log = False
+            
+            if log_data['fin']=='normal':   
+                log_data['cmd']='log_str'
+                if iteration_index % int(configDict['normal_iteration_count']) == 0:
                     print ''
                     print 'GeneralMutatorManagementEngine: Send normal iteration log to LoggerEngine'
-                    x = 'At '+str(datetime.datetime.now()) + ': Iteration '+str(iteration_index)+' reached!'
-                    smeClient.send({'cmd': 'log_str', 'str': x})
-                    smeClient.recv()
-            if debuggerRecv['fin'] == 'exception':
-                smeClient.connect(LOG_ENGINE_HOST, LOG_ENGINE_PORT)
-                print ''
-                print 'GeneralMutatorManagementEngine: Send exeption log to LoggerEngine'
-                # additional info need to be sent and logged here
-                # e.g. stacktrace, exploitabilities ...
-                strLog = 'At '+str(datetime.datetime.now()) + ', Iteration '+str(iteration_index)+': '+debuggerRecv['bucket']
-                smeClient.send({'cmd': 'log_exception', 'str': strLog, 'management_iteration': iteration_index,'buff': debuggerRecv['buff'], 'bucket': debuggerRecv['bucket'],
-                        'original_sample':original_sample})
-                smeClient.recv()
+                    log_data['str'] = 'At '+str(datetime.datetime.now()) + ': Iteration '+str(iteration_index)+' reached!'
+                    need_to_write_log = True
+            else:
+                log_data['cmd']='log_exception'
+                log_data['str'] = 'At '+str(datetime.datetime.now()) + ', Iteration '+str(iteration_index)+': '+debuggerRecv['bucket']
+                need_to_write_log = True
+            
+            # if  need_to_write_log = True
+            if  need_to_write_log:
+                print 'MutatorManagementEngine: Request LoggerEngine'
+                loggerQueue = Queue()
+                loggerDict = copy.deepcopy(configDict)
+                loggerQueue.put(loggerDict)
+                
+                t = Process(target=LoggerEngine, args=(loggerQueue, log_data, iteration_index))
+                t.start()
+                t.join()

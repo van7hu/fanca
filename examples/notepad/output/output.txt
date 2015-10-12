@@ -8,15 +8,23 @@
 [fuzzer_type]
 type = 0
 attack_heuristics_presents = 0
-executors_prÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑÑptions presents depends on the 'executor_type' option
+executors_presents = 1
+monitors_presents = 1
+loggers_presents = 1
+reporters_presents = 0
+classifiers_presents = 0
+modelers_presents = 0
+learnings_presents = 0
+
+#
+# 1. executor_type
+#	_ 0: Windows command line
+# Other options presents depends on the 'executor_type' option
 # 2. test_case_generation_engine
 #	_ 0: general_mutator (based on sample files) 
 # All the path here must be WITH a trailling '\'
 [executors]
-project_dir = 'C:\fanca\examples\notepad'
-
-test_case_generation_engine = 0
-samples_dir = 'C:\fanca\examples\notepad\samples'
+project_dir = 'C:\faéééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééxamples\notepad\samples'
 iteration_per_sample = 10
 output_dir = 'C:\fanca\examples\notepad\output'
 output_filename = 'output.txt'

@@ -1,12 +1,14 @@
 import PyDbgEng
 from comtypes.gen import DbgEng
 import threading
+from threading import Thread
 import os
 from ctypes import *
 import re
 
 from Fanca.commons.jsonsocket import Client
-from Fanca.CONFIG import *
+from Fanca.core.executors.monitors.windows.CONFIG import *
+
 
 class DbgEventHandler(PyDbgEng.IDebugOutputCallbacksSink, PyDbgEng.IDebugEventCallbacksSink):
     buff = ''
@@ -28,6 +30,9 @@ class DbgEventHandler(PyDbgEng.IDebugOutputCallbacksSink, PyDbgEng.IDebugEventCa
             ExceptionInformation8, ExceptionInformation9, ExceptionInformation10,
             ExceptionInformation11, ExceptionInformation12, ExceptionInformation13,
             ExceptionInformation14, FirstChance):
+
+        if self.IgnoreSecondChanceGardPage and ExceptionCode == 0x80000001:
+				return DbgEng.DEBUG_STATUS_NO_CHANGE
 
         print 'WindowsDebugEngine: We got an exception: #8x' % ExceptionCode
 
@@ -84,17 +89,19 @@ class DbgEventHandler(PyDbgEng.IDebugOutputCallbacksSink, PyDbgEng.IDebugEventCa
                 bucket = 'Unknown'
 
             dbgClient = Client()
-            dbgClient.connect(MANAGEMENT_ENGINE_HOST, MANAGEMENT_ENGINE_PORT)
+            dbgClient.connect(REPLY_HOST, REPLY_PORT)
             dbgClient.send({'fin': 'exception', 'bucket': bucket, 'buff': self.buff})
             dbgClient.close()
         # Kill the process
         return DbgEng.DEBUG_STATUS_BREAK
 
-class Debugger(object):
+class Debugger():
     def createDebugger(self, command, follow_fork):
         # Using hardcoded path, need to ve changed in future
         dbg_eng_dll_path = "C:\\WinDDK\\Debuggers"
         event_handler = DbgEventHandler()
         dbg = PyDbgEng.ProcessCreator(command, follow_fork, event_handler, event_handler, dbg_eng_dll_path,"SRV*http://msdl.microsoft.com/download/symbols")
         quit_event = threading.Event()
-        dbg.wait_for_event(10000)
+        print 'WindowsDebugEngine: Waitting for debug event'
+        dbg.event_loop_with_quit_event(quit_event)
+        print 'End of event'

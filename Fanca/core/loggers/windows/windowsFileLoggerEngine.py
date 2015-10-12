@@ -4,11 +4,12 @@ from Fanca.CONFIG import *
 
 class WindowsFileLoggerEngine:
     # We use the same logging technique as of Peach fuzzer 2.3.9, though not exactly
-    def __init__(self, server, configOptions):
+    def __init__(self, loggerQueue, log_data, iteration_index):
         # from log_dir, create new directory for each test based on time
+        config = loggerQueue.get()
         temp = str(time.time())
 
-        log_dir = configOptions.logger_dir
+        log_dir = config['logger_dir']
         log_dir = os.path.join(log_dir, temp)
         os.mkdir(log_dir)
         print "WindowsWindowsFileLoggerEngine: Logging to directory: " + log_dir
@@ -16,16 +17,6 @@ class WindowsFileLoggerEngine:
         # open log file in unbuffered mode
         logFileHandler = open(os.path.join(log_dir, temp+'.log'), 'w', 0)
 
-        connection_counter = 0
-
-        print 'WindowsFileLoggerEngine: Start waitting for command'
-
-        while True:
-            server.accept()
-            connection_counter = connection_counter + 1
-
-            print str(connection_counter) + '. WindowsFileLoggerEngine: Receiving connection'
-            recv = server.recv()
             # the data received will be in the form of a dict with the key
             # 1. cmd
             # - cmd = log_str
@@ -35,26 +26,34 @@ class WindowsFileLoggerEngine:
             #       3. sample_filename = 'The sample file was used to make the fuzzed_filename', absolutepath + filename
             #       4. fuzzed_filename = 'The file was used to fuzz', absolute path + file name
             #       5. iteration_count = interger_type of iteration has passed since fuzzing
-            if recv['cmd'] == 'log_str':
-                print "WindowsFileLoggerEngine: recv['cmd']: " + recv['cmd']
-                print 'WindowsFileLoggerEngine: Write to log file'
-                logFileHandler.write(recv['str'] + '\n')
-                # send nothing back to management engine, indicate that logging finished
-                server.send('')
-            elif recv['cmd'] == 'log_exception':
-                print "WindowsFileLoggerEngine: recv['cmd']: " + recv['cmd']
-                print 'WindowsFileLoggerEngine: Write to log file'
-                logFileHandler.write(recv['str'] + '\n')
-                # mkdir based on iteration_count
-                log_exception_directory = os.path.join(log_dir, str(recv['management_iteration']))
-                os.mkdir(log_exception_directory)
-                dbgLogfile = open(os.path.join(log_exception_directory, recv['bucket']+'.txt'), 'w', 0)
-                dbgLogfile.write(recv['buff'])
-                dbgLogfile.close()
+        if log_data['cmd'] == 'log_str':
+            print "WindowsFileLoggerEngine: log_data['cmd']: " + log_data['cmd']
+            print 'WindowsFileLoggerEngine: Write to log file'
+            logFileHandler.write(log_data['str'] + '\n')
 
-                shutil.copyfile(recv['original_sample'], os.path.join(log_exception_directory, os.path.basename(recv['original_sample'])))
-                shutil.copyfile(os.path.join(configOptions.output_dir, configOptions.output_filename), os.path.join(log_exception_directory, \
-                        os.path.basename(configOptions.output_filename)))
-                # Write info about stacktrace in a file specifically in this folder
-                # send nothing back to management engine, indicate that logging finished
-                server.send('')
+        elif log_data['cmd'] == 'log_exception':
+            print "WindowsFileLoggerEngine: log_data['cmd']: " + log_data['cmd']
+            print 'WindowsFileLoggerEngine: Write to log file'
+            logFileHandler.write(log_data['str'] + '\n')
+            # mkdir based on iteration_count
+            log_exception_directory = os.path.join(log_dir, str(iteration_index))
+            os.mkdir(log_exception_directory)
+            dbgLogfile = open(os.path.join(log_exception_directory, log_data['bucket']+'.txt'), 'w', 0)
+            dbgLogfile.write(log_data['buff'])
+            dbgLogfile.close()
+
+            iteration_per_sample = int(config['iteration_per_sample'])
+            output = os.path.join(config['output_dir'], config['output_filename'])
+            samples_dir = config['samples_dir']
+            sample_list = [ f for f in os.listdir(samples_dir) if os.path.isfile(os.path.join(samples_dir,f)) ]
+            sample_count = len(sample_list)
+            sample_list_current = iteration_index % iteration_per_sample
+            input = os.path.join(samples_dir, sample_list['sample_list_current'])
+            
+            
+            shutil.copyfile(input, os.path.join(log_exception_directory, os.path.basename(input)))
+            shutil.copyfile(output, os.path.join(log_exception_directory, \
+                os.path.basename(config['output'])))
+        
+        
+        logFileHandler.close()

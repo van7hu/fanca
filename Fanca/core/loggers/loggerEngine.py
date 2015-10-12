@@ -4,11 +4,12 @@ from Fanca.commons.jsonsocket import Server
 from Fanca.core.loggers.windows.windowsFileLoggerEngine import WindowsFileLoggerEngine
 
 class LoggerEngine:
-    def __init__(self, configOptions):
-        server = Server(LOG_ENGINE_HOST, LOG_ENGINE_PORT)
-        print 'LoggerEngine: Start waitting for command'
-
-        logger_type = int(configOptions.logger_type)
-        if logger_type == 0:
+    def __init__(self, loggerQueue, executorQueue, iteration_index):      
+        config = loggerQueue.get()
+        logger_type =  int(config['logger_type'])
+        
+        # put the config back, and choose betwwne logger type
+        loggerQueue.put(config)
+        if logger_type == 0:           
             print 'LoggerEngine: Using Windows.FileLoggerEngine'
-            WindowsFileLoggerEngine(server, configOptions)
+            WindowsFileLoggerEngine(loggerQueue, executorQueue, iteration_index)

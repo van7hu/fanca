@@ -1,14 +1,12 @@
-from Fanca.commons.jsonsocket import Server
-from Fanca.CONFIG import *
 
-from Fanca.core.executors.generators.mutatorGenerator import SimpleReplacerGenerator
+from Fanca.core.executors.generators.mutatorGenerator import MutatorGenerator
 
 class GeneratorEngine:
-    def __init__(self, configOptions):
-        server = Server(GENERATOR_ENGINE_HOST, GENERATOR_ENGINE_PORT)
-        print 'GeneratorEngine: Start waitting for command'
-
-        generator_type = int(configOptions.test_case_generation_engine)
-        if generator_type == 0:
-            print 'GeneratorEngine: Using SimpleReplacerGenerator'
-            SimpleReplacerGenerator(server, configOptions)
+    def __init__(self, generatorQueue, iteration_index):
+        config = generatorQueue.get()
+        type = int(config['test_case_generation_engine'])
+        
+        generatorQueue.put(config)
+        if type == 0:
+            print 'GeneratorEngine: Using MutatorGenerator'
+            MutatorGenerator(generatorQueue, iteration_index)
