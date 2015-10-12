@@ -29,6 +29,7 @@ def getConfigDict(config):
     config_dict['test_case_generation_engine'] = config.get('executors', 'test_case_generation_engine')
     if config_dict['executor_type'] == '0':
         config_dict['command']  = config.get('executors', 'command')
+        config_dict['windows_debugger_type']  = config.get('executors', 'windows_debugger_type')
         config_dict['follow_fork']  = config.get('executors', 'follow_fork')
         config_dict['process_name']  = config.get('executors', 'process_name')
 

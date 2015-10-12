@@ -12,8 +12,10 @@ class Wappdbger:
         if code == win32.EXCEPTION_DEBUG_EVENT and not crash.isOurBreakpoint and not crash.isSystemBreakpoint and crash.firstChance:
             if crash.isOurBreakpoint or crash.isSystemBreakpoint or not crash.firstChance:
                 return
-
+            
             status, rule, description = crash.isExploitable()
+            print 'WindowsDebugEngine: We found interesting exception'
+            print 'WindowsDebugEngine: %s, %s, %s' % (rule, description, status)
 
             self.executorQueue.put({'fin':'exception', 'rule': rule, 'description': description, 'status': status})
         else:
@@ -21,9 +23,8 @@ class Wappdbger:
             pass
         
     def createDebugger(self, command):
-        print 'WindowsDebugEngine: create'
         debug = Debug(self.debuggerEventHandler, bKillOnExit=True)
-        argv = [command,]
+        argv = command.split()
         debug.execv(argv)
         debug.loop()
         

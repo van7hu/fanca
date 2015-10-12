@@ -1,6 +1,5 @@
 #
-# This config file is used to test the fuzzer in case of exception, especially in divide by zero instance
-# WARNING: Do not use single quote or double in any option name or value, all are string already, doing that will cause error 
+#WARNING: Do not use single quote or double in any option name or value, all are string already, doing that will cause error 
 
 # type = 0, mutation fuzzer
 [fuzzer_type]
@@ -21,20 +20,15 @@ learnings_presents = 0
 # 2. test_case_generation_engine
 #	_ 0: general_mutator (based on sample files) 
 [executors]
-project_dir = C:\fanca\examples\dividebyzero
-
-test_case_generation_engine = 0
-mutator_generator_engine = 0
-
+project_dir = C:\fanca\examples\drrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr = 0
 samples_dir = C:\fanca\examples\dividebyzero\samples
-iteration_per_sample = 4
-output_dir = C:\fanca\examples\dividebyzero\outputs
+iteration_per_sample = 10
+output_dir = C:\fanca\examples\dividebyzero\output
 output_filename = output.txt
 
 
 executor_type = 0
 command = C:\fanca\examples\dividebyzero\dividebyzero.exe
-windows_debugger_type = 'winappdbg'
 follow_fork = True
 process_name = dividebyzero.exe
 
@@ -53,8 +47,6 @@ monitor_type = 0
 [loggers]
 logger_type = 0
 logger_dir = C:\fanca\examples\dividebyzero\logs
-# normal log happend when fuzzer passed certain iteration count
-normal_iteration_count = 5
 
 [managements]
 management_engine = 0

@@ -43,7 +43,6 @@ class GeneralMutatorManagementEngine:
             t.start()
             t.join()
             log_data = executorQueue.get()
-            print '################log_data = '+str(log_data)
             executorQueue.close()
             
             need_to_write_log = False

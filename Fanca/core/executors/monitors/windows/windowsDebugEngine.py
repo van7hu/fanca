@@ -21,8 +21,12 @@ class WindowsDebugEngine:
         
         normal_data = {'fin': 'normal'}
 
-        #debuggerProcess = Process(target=self.runCommand, args=(command, follow_fork))
-        debuggerProcess = Process(target=self.runCommandWinappdbg, args=(command, executorQueue))
+        if config['windows_debugger_type']=='pydgbeng':
+            print 'WindowsDebugEngine: Using PyDbgEng'
+            debuggerProcess = Process(target=self.runCommand, args=(command, follow_fork))
+        else:
+            print 'WindowsDebugEngine: Using winappdbg'
+            debuggerProcess = Process(target=self.runCommandWinappdbg, args=(command, executorQueue))
         
         print 'WindowsDebugEngine: Start process to run debugger'
         debuggerProcess.start()

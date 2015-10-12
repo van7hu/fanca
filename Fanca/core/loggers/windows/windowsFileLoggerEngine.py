@@ -29,12 +29,10 @@ class WindowsFileLoggerEngine:
             #       4. fuzzed_filename = 'The file was used to fuzz', absolute path + file name
             #       5. iteration_count = interger_type of iteration has passed since fuzzing
         if log_data['cmd'] == 'log_str':
-            print "WindowsFileLoggerEngine: log_data['cmd']: " + log_data['cmd']
             print 'WindowsFileLoggerEngine: Write to log file'
             logFileHandler.write(log_data['str'] + '\n')
 
         elif log_data['cmd'] == 'log_exception':
-            print "WindowsFileLoggerEngine: log_data['cmd']: " + log_data['cmd']
             print 'WindowsFileLoggerEngine: Write to log file'
             logFileHandler.write(log_data['str'] + '\n')
             # mkdir based on iteration_count
