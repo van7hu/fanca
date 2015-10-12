@@ -2,6 +2,7 @@ import psutil, time
 from multiprocessing import Process
 
 from Fanca.core.executors.monitors.windows.debugger import Debugger
+from Fanca.core.executors.monitors.windows.wappdbger import Wappdbger
 from Fanca.core.executors.monitors.windows.CONFIG import *
 from Fanca.commons.jsonsocket import Server
 
@@ -20,26 +21,27 @@ class WindowsDebugEngine:
         
         normal_data = {'fin': 'normal'}
 
-        debuggerProcess = Process(target=self.runCommand, args=(command, follow_fork))
-        replyProcess = Process(target=self.replyServer, args=(executorQueue,))
-        print 'WindowsDebugEngine: Start 2 processes for debugger'
+        #debuggerProcess = Process(target=self.runCommand, args=(command, follow_fork))
+        debuggerProcess = Process(target=self.runCommandWinappdbg, args=(command, executorQueue))
+        
+        print 'WindowsDebugEngine: Start process to run debugger'
         debuggerProcess.start()
-        replyProcess.start()
 
-        print "WindowsDebugEngine: Old thread checks for CPU usage by process '" + process_name + "', if it is zero, debugger will be killed"
+        print "WindowsDebugEngine: Checks CPU usage'" + process_name + "', if it is zero, debugger will be terminate."
         time.sleep(1)
+        
 
         self.checkProcessCpuUsage(process_name)
         debuggerProcess.terminate()
-        replyProcess.terminate()
+
 
         if executorQueue.empty():
-            print 'We have an empry'
             executorQueue.put(normal_data)            
         else:
-            print 'Noooooooooooo'
             exception_data = executorQueue.get_nowait()
             executorQueue.put(exception_data)
+        
+        
 
     def runCommand(self, command, follow_fork):      
         debugger = Debugger()
@@ -47,13 +49,11 @@ class WindowsDebugEngine:
         print 'Command: '+command
         debugger.createDebugger(command, follow_fork)
 
-    def replyServer(self, executorQueue):
-        print 'WindowsDebugEngine, replyServer():Waitting for reply from debugger'
-        server = Server(REPLY_HOST, REPLY_PORT)
-        server.accept()
-        print 'WindowsDebugEngine, replyServer():got reply from debugger'
-        executorQueue.put(server.recv())
-
+    def runCommandWinappdbg(self, command, executorQueue):
+        wappdbger = Wappdbger(executorQueue)
+        print 'WindowsDebugEngine, runCommandWinappdbg(): start new Process to run debugger'
+        wappdbger.createDebugger(command)
+    
     # some helper functions
     def checkProcessCpuUsage(self, process_name):
         pid = self.findProcess(process_name)

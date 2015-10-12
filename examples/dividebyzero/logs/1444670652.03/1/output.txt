@@ -23,7 +23,9 @@ learnings_presents = 0
 project_dir = C:\fanca\examples\dividebyzero
 
 test_case_generation_engine = 0
-samples_dir = оооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооut
+samples_dir = C:\fanca\examples\dividebyzero\samples
+iteration_per_sample = 10
+output_dir = C:\fanca\examples\dividebyzero\output
 output_filename = output.txt
 
 
@@ -36,7 +38,7 @@ process_name = dividebyzero.exe
 
 #
 # 1. monitor_type
-#	_ 0: start the program under the debugger (Windows)
+#	_ 0: sЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩЩr (Windows)
 [monitors]
 monitor_type = 0
 

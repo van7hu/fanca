@@ -4,18 +4,20 @@ from Fanca.CONFIG import *
 
 class WindowsFileLoggerEngine:
     # We use the same logging technique as of Peach fuzzer 2.3.9, though not exactly
-    def __init__(self, loggerQueue, log_data, iteration_index):
+    def __init__(self, loggerQueue, log_data, iteration_index, temp):
         # from log_dir, create new directory for each test based on time
         config = loggerQueue.get()
-        temp = str(time.time())
 
         log_dir = config['logger_dir']
         log_dir = os.path.join(log_dir, temp)
-        os.mkdir(log_dir)
+        try:
+            os.mkdir(log_dir)
+        except:
+            pass
         print "WindowsWindowsFileLoggerEngine: Logging to directory: " + log_dir
 
         # open log file in unbuffered mode
-        logFileHandler = open(os.path.join(log_dir, temp+'.log'), 'w', 0)
+        logFileHandler = open(os.path.join(log_dir, temp+'.log'), 'a', 0)
 
             # the data received will be in the form of a dict with the key
             # 1. cmd
@@ -38,22 +40,19 @@ class WindowsFileLoggerEngine:
             # mkdir based on iteration_count
             log_exception_directory = os.path.join(log_dir, str(iteration_index))
             os.mkdir(log_exception_directory)
-            dbgLogfile = open(os.path.join(log_exception_directory, log_data['bucket']+'.txt'), 'w', 0)
-            dbgLogfile.write(log_data['buff'])
-            dbgLogfile.close()
 
             iteration_per_sample = int(config['iteration_per_sample'])
             output = os.path.join(config['output_dir'], config['output_filename'])
             samples_dir = config['samples_dir']
             sample_list = [ f for f in os.listdir(samples_dir) if os.path.isfile(os.path.join(samples_dir,f)) ]
             sample_count = len(sample_list)
-            sample_list_current = iteration_index % iteration_per_sample
-            input = os.path.join(samples_dir, sample_list['sample_list_current'])
+            sample_list_current = iteration_index / iteration_per_sample
+            input = os.path.join(samples_dir, sample_list[sample_list_current])
             
             
             shutil.copyfile(input, os.path.join(log_exception_directory, os.path.basename(input)))
             shutil.copyfile(output, os.path.join(log_exception_directory, \
-                os.path.basename(config['output'])))
+                os.path.basename(output)))
         
         
         logFileHandler.close()

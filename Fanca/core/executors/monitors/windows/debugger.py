@@ -19,8 +19,19 @@ class DbgEventHandler(PyDbgEng.IDebugOutputCallbacksSink, PyDbgEng.IDebugEventCa
     def Output(self, this, Mask, Text):
         self.buff += Text
 
+    def LoadModule(self, unknown, imageFileHandle, baseOffset, moduleSize, moduleName, imageName, checkSum, timeDateStamp = None):
+			if self.pid == None:
+				self.dbg.idebug_control.Execute(DbgEng.DEBUG_OUTCTL_THIS_CLIENT,
+										   c_char_p("|."),
+										   DbgEng.DEBUG_EXECUTE_ECHO)
+				
+				match = re.search(r"\.\s+\d+\s+id:\s+([0-9a-fA-F]+)\s+\w+\s+name:\s", self.buff)
+				if match != None:
+					self.pid = int(match.group(1), 16)
+
+
     def ExitProcess(self, dbg, ExitCode):
-        print 'Debugger: Target application has exitted'
+        print 'WindowsDebugEngine: Target application has exitted'
         return DEBUG_STATUS_NO_CHANGE
 
     def Exception(self, dbg, ExceptionCode, ExceptionFlags, ExceptionRecord,
@@ -31,28 +42,9 @@ class DbgEventHandler(PyDbgEng.IDebugOutputCallbacksSink, PyDbgEng.IDebugEventCa
             ExceptionInformation11, ExceptionInformation12, ExceptionInformation13,
             ExceptionInformation14, FirstChance):
 
-        if self.IgnoreSecondChanceGardPage and ExceptionCode == 0x80000001:
-				return DbgEng.DEBUG_STATUS_NO_CHANGE
-
         print 'WindowsDebugEngine: We got an exception: #8x' % ExceptionCode
 
         if FirstChance:
-            # Guard page or illegal op
-            if ExceptionCode == 0x80000001 or ExceptionCode == 0xC000001D:
-                pass
-            elif ExceptionCode == 0xC0000005:
-                # is av on eip? - acess violation on eip
-                if ExceptionInformation0 == 0 and ExceptionInformation1 == ExceptionAddress:
-                    pass
-
-                # is write a/v? - write access violation
-                elif ExceptionInformation0 == 1 and ExceptionInformation1 != 0:
-                    pass
-
-                # is DEP?
-                elif ExceptionInformation0 == 0:
-                    pass
-
 
             # more code here to output stacktrace, bang explotable, and bucket of exception ...
             print 'WindowsDebugEngine: Found interesting exception'
@@ -103,5 +95,6 @@ class Debugger():
         dbg = PyDbgEng.ProcessCreator(command, follow_fork, event_handler, event_handler, dbg_eng_dll_path,"SRV*http://msdl.microsoft.com/download/symbols")
         quit_event = threading.Event()
         print 'WindowsDebugEngine: Waitting for debug event'
-        dbg.event_loop_with_quit_event(quit_event)
+        #dbg.event_loop_with_quit_event(quit_event)
+        dbg.wait_for_event(80000)
         print 'End of event'

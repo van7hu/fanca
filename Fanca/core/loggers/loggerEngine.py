@@ -4,7 +4,7 @@ from Fanca.commons.jsonsocket import Server
 from Fanca.core.loggers.windows.windowsFileLoggerEngine import WindowsFileLoggerEngine
 
 class LoggerEngine:
-    def __init__(self, loggerQueue, executorQueue, iteration_index):      
+    def __init__(self, loggerQueue, executorQueue, iteration_index, temp):      
         config = loggerQueue.get()
         logger_type =  int(config['logger_type'])
         
@@ -12,4 +12,4 @@ class LoggerEngine:
         loggerQueue.put(config)
         if logger_type == 0:           
             print 'LoggerEngine: Using Windows.FileLoggerEngine'
-            WindowsFileLoggerEngine(loggerQueue, executorQueue, iteration_index)
+            WindowsFileLoggerEngine(loggerQueue, executorQueue, iteration_index, temp)

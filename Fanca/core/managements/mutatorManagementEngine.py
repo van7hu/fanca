@@ -11,6 +11,8 @@ class GeneralMutatorManagementEngine:
         iteration_to_fuzz = configDict['iteration']
         iteration_index = 0
         
+        temp = str(time.time())
+        
         while iteration_index < iteration_to_fuzz:
             iteration_index = iteration_index + 1
             print str(iteration_index)+'. Begin iteration #'+str(iteration_index)
@@ -55,7 +57,8 @@ class GeneralMutatorManagementEngine:
                     need_to_write_log = True
             else:
                 log_data['cmd']='log_exception'
-                log_data['str'] = 'At '+str(datetime.datetime.now()) + ', Iteration '+str(iteration_index)+': '+debuggerRecv['bucket']
+                log_data['str'] = 'At '+str(datetime.datetime.now()) + ', Iteration '+str(iteration_index)+': '+log_data['rule']+', '+log_data['description']\
+                    +log_data['status']
                 need_to_write_log = True
             
             # if  need_to_write_log = True
@@ -65,6 +68,6 @@ class GeneralMutatorManagementEngine:
                 loggerDict = copy.deepcopy(configDict)
                 loggerQueue.put(loggerDict)
                 
-                t = Process(target=LoggerEngine, args=(loggerQueue, log_data, iteration_index))
+                t = Process(target=LoggerEngine, args=(loggerQueue, log_data, iteration_index, temp))
                 t.start()
                 t.join()

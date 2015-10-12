@@ -20,10 +20,9 @@ learnings_presents = 0
 # 2. test_case_generation_engine
 #	_ 0: general_mutator (based on sample files) 
 [executors]
-project_dir = C:\fanca\examples\dividebyzero
-
-test_case_generation_engine = 0
-samples_dir = ®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®®ut
+p‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹ples\dividebyzero\samples
+iteration_per_sample = 10
+output_dir = C:\fanca\examples\dividebyzero\output
 output_filename = output.txt
 
 
