@@ -17,6 +17,7 @@ class WindowsFileLoggerEngine:
         print "WindowsWindowsFileLoggerEngine: Logging to directory: " + log_dir
 
         # open log file in unbuffered mode
+
         logFileHandler = open(os.path.join(log_dir, temp+'.log'), 'a', 0)
 
             # the data received will be in the form of a dict with the key
