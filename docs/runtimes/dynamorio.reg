@@ -1,0 +1,4 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\DynamoRIO\DynamoRIO]
+DYNAMORIO_HOME="C:\fanca\dependencies\DynamoRIO"
